@@ -76,7 +76,7 @@ void ubwt_gen_bit_table16(ubwt_t *ubwt)
     int i;
     ubwt->bit_table16[0] = 0;
     for (i = 0; i != 65536; ++i) 
-        ubwt->bit_table16[i] = (i&1) + ubwt->bit_table16[i/2];
+        ubwt->bit_table16[i] = (i&1) + ubwt->bit_table16[i>>1];
 }
 
 void ubwt_update(ubwt_t *ubwt)
@@ -95,7 +95,7 @@ void ubwt_update(ubwt_t *ubwt)
 #define ubwt_occ_a(ubwt, bwt_i) ((ubwt)->ubwt + ubwt_bwt_occ_a((bwt_i)>>_OCC_INV_B))
 #define __occ_cnt4(table, b) (table[(b)&0x1111] + table[(b)>>16&0x1111] + table[(b)>>32&0x1111] + table[(b)>>48&0x1111])
 
-// count numbre of '1'
+// count number of '1'
 static inline int __occ_aux(ubwt_int_t b, const ubwt_t *ubwt, uint8_t c)
 {
     b = ((c&4)?b:~b)>>2 & ((c&2)?b:~b)>>1 & ((c&1)?b:~b) & 0x1111111111111111ull;
@@ -165,6 +165,7 @@ ubwt_count_t ubwt_exact_match(const ubwt_t *ubwt, int qlen, const uint8_t *query
     *bwt_k = k, *bwt_l = l;
     return l-k+1;
 }
+
 ubwt_count_t ubwt_uid(ubwt_t *ubwt, ubwt_count_t k)
 {
     ubwt_count_t occ_k;
